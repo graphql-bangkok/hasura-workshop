@@ -1,4 +1,16 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Links
+
+Repository:
+https://github.com/graphql-bangkok/hasura-workshop
+
+Tutorial:
+https://learn.hasura.io/graphql/typescript-react-apollo/introduction
+
+Production App:
+https://learn-hasura-todo-app.netlify.com/
+
+Hasura Todo API:
+https://learn.hasura.io/graphql/graphiql
 
 ## Available Scripts
 
