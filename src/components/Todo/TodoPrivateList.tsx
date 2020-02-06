@@ -10,7 +10,7 @@ type Todo = {
   is_completed: boolean;
 };
 
-const GET_MY_TODOS = gql`
+export const GET_MY_TODOS = gql`
   query getMyTodos {
     todos(
       where: { is_public: { _eq: false } }
