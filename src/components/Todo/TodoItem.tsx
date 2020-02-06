@@ -1,6 +1,7 @@
 import * as React from "react";
 import gql from "graphql-tag";
 import { useMutation } from "@apollo/react-hooks";
+import { GET_MY_TODOS } from "./TodoPrivateList";
 
 export type TodoItem = {
   id: number;
@@ -29,12 +30,34 @@ const TOGGLE_TODO = gql`
   }
 `;
 
+const REMOVE_TODO = gql`
+  mutation removeTodo($id: Int!) {
+    delete_todos(where: { id: { _eq: $id } }) {
+      affected_rows
+    }
+  }
+`;
+
 const TodoItem = ({ index, todo }: TodoItemType) => {
   const [todoUpdate] = useMutation(TOGGLE_TODO);
+  const [removeTodoMutation] = useMutation(REMOVE_TODO);
 
   const removeTodo = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    removeTodoMutation({
+      variables: { id: todo.id },
+      update: (cache: any) => {
+        const existingTodos = cache.readQuery({ query: GET_MY_TODOS });
+        const newTodos = existingTodos.todos.filter(
+          (t: any) => t.id !== todo.id
+        );
+        cache.writeQuery({
+          query: GET_MY_TODOS,
+          data: { todos: newTodos }
+        });
+      }
+    });
   };
 
   const toggleTodo = () => {
