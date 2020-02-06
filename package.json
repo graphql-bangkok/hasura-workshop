@@ -12,6 +12,7 @@
     "apollo-cache-inmemory": "^1.6.5",
     "apollo-client": "^2.6.8",
     "apollo-link-http": "^1.5.16",
+    "apollo-link-ws": "^1.0.19",
     "graphql": "^14.6.0",
     "graphql-tag": "^2.10.3",
     "moment": "^2.22.2",
@@ -21,6 +22,7 @@
     "react-router": "^5.0.1",
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.1.1",
+    "subscriptions-transport-ws": "^0.9.16",
     "typescript": "3.6.2"
   },
   "scripts": {

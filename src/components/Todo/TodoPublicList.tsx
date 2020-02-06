@@ -1,87 +1,56 @@
-import React, { Fragment, useState, useRef } from "react";
+import { useSubscription } from "@apollo/react-hooks";
+import gql from "graphql-tag";
+import React, { Fragment } from "react";
 import TaskItem from "./TaskItem";
 
 type TodoItem = {
-  id: number,
-  title: string,
-  user: { name: string }
-}
+  id: number;
+  title: string;
+  user: { name: string };
+};
 
 type publicListProps = {
-  latestTodo?: TodoItem | null
-}
+  latestTodo?: TodoItem | null;
+};
 
-const TodoPublicList = (props: publicListProps) => {
-  const [olderTodosAvailable] = useState(props.latestTodo ? true : false)
-  const [newTodosCount] = useState(0)
-  const initialTodos = [
-    {
-      id: 1,
-      title: "This is public todo 1",
-      user: {
-        name: "someUser1"
-      }
-    },
-    {
-      id: 2,
-      title: "This is public todo 2",
-      is_completed: false,
-      is_public: true,
-      user: {
-        name: "someUser2"
-      }
-    },
-    {
-      id: 3,
-      title: "This is public todo 3",
-      user: {
-        name: "someUser3"
-      }
-    },
-    {
-      id: 4,
-      title: "This is public todo 4",
-      user: {
-        name: "someUser4"
+// const PUBLIC_TODOS = gql`
+//   query GetPublicTodo {
+//     todos(where: { is_public: true }, order_by: { created_at: desc }) {
+//       id
+//     }
+//   }
+// `;
+
+const LIVE_PUBLIC_TODOS = gql`
+  subscription LivePublicTodos {
+    todos(limit: 5, order_by: { created_at: desc }) {
+      id
+      title
+      is_completed
+      created_at
+      user {
+        name
       }
     }
-  ];
-  const [todos] = useState<TodoItem[]>(initialTodos);
-
-  let oldestTodoId = useRef(props.latestTodo ? props.latestTodo.id + 1 : 0);
-  let newestTodoId = useRef(props.latestTodo ? props.latestTodo.id : 0);
-  if(todos && todos.length) {
-    oldestTodoId.current = todos[todos.length - 1].id
-    newestTodoId.current = todos[0].id;
   }
+`;
 
-  const loadOlder = () => {
-  };
+const TodoPublicList = (props: publicListProps) => {
+  const { loading, data } = useSubscription(LIVE_PUBLIC_TODOS);
 
-  const loadNew = () => {
-  };
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Fragment>
       <div className="todoListWrapper">
-        {newTodosCount !== 0 && (
-          <div className={"loadMoreSection"} onClick={() => loadNew()}>
-            New tasks have arrived! ({newTodosCount.toString()})
-          </div>
-        )}
-
         <ul>
-          {todos &&
-            todos.map((todo, index) => {
+          {data.todos &&
+            data.todos.map((todo: any, index: number) => {
               return <TaskItem key={index} index={index} todo={todo} />;
             })}
         </ul>
-
-        <div className={"loadMoreSection"} onClick={() => loadOlder()}>
-          {olderTodosAvailable
-            ? "Load older tasks"
-            : "No more public tasks!"}
-        </div>
       </div>
     </Fragment>
   );
